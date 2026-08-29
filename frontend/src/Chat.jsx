@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function Chat() {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,9 +38,9 @@ export default function Chat() {
     const qId = searchParams.get('question');
     
     if (qId) {
-      loadQuestion(`http://localhost:5000/api/flow/question/${qId}`);
+      loadQuestion(`${API_URL}/api/flow/question/${qId}`);
     } else {
-      loadQuestion('http://localhost:5000/api/flow/start');
+      loadQuestion(`${API_URL}/api/flow/start`);
     }
   }, []);
 
@@ -46,7 +48,7 @@ export default function Chat() {
     if (!question) return;
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/flow/answer', {
+      const res = await axios.post(`${API_URL}/api/flow/answer`, {
         questionId: question._id,
         optionId
       }, { headers });
@@ -65,7 +67,7 @@ export default function Chat() {
   const handleBack = async () => {
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/flow/back', {}, { headers });
+      const res = await axios.post(`${API_URL}/api/flow/back`, {}, { headers });
       setQuestion(res.data.question);
       setCanGoBack(res.data.canGoBack || false);
       setSelectedOptionId(res.data.previouslySelectedOptionId || null);
